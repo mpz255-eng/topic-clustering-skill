@@ -5,7 +5,9 @@ __pycache__/
 *.xlsx
 !examples/*.xlsx
 *.png
+!examples/*.png
 *.jpg
+!examples/*.jpg
 clustering_workspace/
 .DS_Store
 *.egg-info/

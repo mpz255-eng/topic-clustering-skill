@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*.pkl
+*.csv
+*.xlsx
+!examples/*.xlsx
+*.png
+*.jpg
+clustering_workspace/
+.DS_Store
+*.egg-info/
+dist/
+build/

@@ -1,0 +1,71 @@
+# Cursor Rule — 主题聚类分析
+
+将此文件放入项目根目录 `.cursor/rules/topic-clustering.mdc`，
+或合并到 `.cursorrules` 中。当用户提及聚类相关关键词时，Cursor 自动加载此规则。
+
+---
+
+## 触发条件
+
+用户消息包含以下任一关键词时触发：
+主题聚类, 文本聚类, 话题聚类, 聚类分析, 自动分类文本, KMeans聚类, LDA主题模型, 层次聚类文本, 按主题归类, 文本自动分组, 文本分群, tfidf聚类, 文档聚类
+
+## 指令
+
+你将引导用户完成主题聚类分析。核心工具是 `cluster.py`，支持 KMeans、层次聚类、LDA 三种方法。
+
+### 第一步：确认输入
+
+询问用户：
+1. 数据文件路径（.xlsx / .csv / 文件夹）
+2. 文本列的列名
+3. 是否有额外停用词表
+
+### 第二步：执行管道
+
+以下命令按顺序执行，每步展示结果让用户确认后再继续：
+
+```bash
+# 1. 语言检测
+python cluster.py detect --input "<path>" --text-col "<col>"
+
+# 2. 预处理
+python cluster.py preprocess --input "<path>" --text-col "<col>" \
+  --output "<workspace>/preprocessed.pkl"
+
+# 3. 向量化
+python cluster.py vectorize --input "<workspace>/preprocessed.pkl" \
+  --output "<workspace>/vectorized.pkl"
+
+# 4. 肘部法（KMeans 时）
+python cluster.py elbow --input "<workspace>/vectorized.pkl" \
+  --output "<workspace>/elbow.png" --k-range 3 20
+
+# 5. 聚类
+python cluster.py fit --input "<workspace>/vectorized.pkl" \
+  --texts "<workspace>/preprocessed.pkl" \
+  --method kmeans --k <K值> \
+  --output "<workspace>/model.pkl" \
+  --labels-output "<workspace>/labels.csv"
+
+# 6. 导出
+python cluster.py export --input "<原始数据>" \
+  --labels "<workspace>/labels.csv" \
+  --keywords "<workspace>/model.pkl" \
+  --output "./聚类结果.xlsx"
+```
+
+### 第三步：展示结果
+
+导出后展示：
+- 每簇文档数、占比
+- 每簇 TF-IDF 关键词
+- 每簇高频词（原始词频）
+- 辅助用户命名各簇
+
+### 注意事项
+
+- workspace 目录在数据文件同级创建 `clustering_workspace/`
+- 首次使用需安装依赖：`pip install -r requirements.txt`
+- 英文文本需安装 spaCy 模型：`python -m spacy download en_core_web_sm`
+- 中间文件（.pkl, .csv, .png）保留在 workspace 中，便于反复调整

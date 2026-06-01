@@ -100,6 +100,21 @@ python cluster.py export \
 
 ---
 
+## 多平台支持
+
+`cluster.py` 本身是标准 Python CLI，可被任何 LLM agent 调用。`prompts/` 目录下提供了各平台的驱动模板：
+
+| 文件 | 适用平台 |
+|---|---|
+| `SKILL.md` | Claude Code（原生 skill，自动触发） |
+| `prompts/system-prompt.md` | 通用 LLM（ChatGPT、Claude、Gemini 等） |
+| `prompts/cursor-rule.mdc` | Cursor（`.cursor/rules/` 下使用） |
+| `prompts/custom-gpt-instructions.md` | OpenAI Custom GPT |
+
+核心思路一致：将模板内容交给对应 LLM，LLM 即会以交互式向导模式引导用户完成 检测→预处理→向量化→聚类→导出 全流程。
+
+---
+
 ## 输出
 
 Excel 文件包含 4 个 sheet：
